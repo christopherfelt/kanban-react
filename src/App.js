@@ -1,24 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
+import "bootstrap/dist/css/bootstrap.css";
+
+import Landing from "./pages/Landing";
+
+import { BoardProvider } from "./context/BoardState";
 
 function App() {
+  const { loginWithRedirect, logout, user, isAuthenticated } = useAuth0();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <BoardProvider>
+        <div className="App">
+          <h1>Kanban</h1>
+          {isAuthenticated && <h5>User: {user.name}</h5>}
+          <Landing />
+        </div>
+      </BoardProvider>
+    </Router>
   );
 }
 
