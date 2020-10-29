@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { BoardContext } from "../context/BoardState";
 import Board from "../components/board";
 import { useAuth0 } from "@auth0/auth0-react";
+import "./css/boards.css";
 
 const Boards = () => {
   const { isAuthenticated, user } = useAuth0();
@@ -18,11 +19,14 @@ const Boards = () => {
   ];
 
   return (
-    <div>
-      <h1>Boards are live</h1>
-      {boards.map((board) => (
-        <Board key={board.id} board={board} />
-      ))}
+    <div className="container">
+      <div className="row">
+        <div className="col-12 d-flex boards-height">
+          {boards.map((board) => (
+            <Board key={board.id} board={board} />
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
