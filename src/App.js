@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import "bootstrap/dist/css/bootstrap.css";
+import Boards from "./pages/Boards";
 
 import Landing from "./pages/Landing";
 
@@ -16,8 +17,11 @@ function App() {
         <div className="App">
           <h1>Kanban</h1>
           {isAuthenticated && <h5>User: {user.name}</h5>}
-          <Landing />
         </div>
+        <Switch>
+          <Route path="/" exact component={Landing} />
+          <Route path="/boards" exact component={Boards} />
+        </Switch>
       </BoardProvider>
     </Router>
   );
