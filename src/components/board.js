@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "./css/board.scss";
+import "./scss/board.scss";
 
 const board = ({ board }) => {
   return (

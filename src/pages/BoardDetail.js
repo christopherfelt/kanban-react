@@ -1,7 +1,6 @@
 import React from "react";
-import board from "../components/board";
 import List from "../components/list";
-import "./css/boards.css";
+import "./scss/boards.scss";
 
 const BoardDetail = () => {
   let lists = [
