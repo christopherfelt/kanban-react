@@ -28,9 +28,9 @@ export const BoardProvider = ({ children }) => {
     let url = "";
 
     if (requestType === "get" || requestType === "post") {
-      url = "http://127.0.0.1:8000/api/" + requestPath;
+      url = "http://127.0.0.1:8000/api/v1/" + requestPath;
     } else {
-      url = "http://127.0.0.1:8000/api/" + requestPath + "/" + data.id;
+      url = "http://127.0.0.1:8000/api/v1/" + requestPath + "/" + data.id;
     }
 
     const token = await getAccessTokenSilently();
@@ -50,8 +50,12 @@ export const BoardProvider = ({ children }) => {
   async function getBoards() {
     try {
       if (isAuthenticated) {
-        const options = getRequestData("get", "", {});
-        await axios(options);
+        const options = await getRequestData("get", "", {});
+        let res = await axios(options);
+        dispatch({
+          type: "GET_BOARDS",
+          payload: res.data,
+        });
       }
     } catch (error) {
       dispatch({

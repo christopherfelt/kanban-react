@@ -9,9 +9,9 @@ const board = ({ board }) => {
       to={{ pathname: `/boarddetail/${board.id}` }}
     >
       <div className="">
-        <div class="card m-1 board-card">
-          <div class="card-body">
-            <h4 class="card-title">{board.name}</h4>
+        <div className="card m-1 board-card">
+          <div className="card-body">
+            <h4 className="card-title">{board.title}</h4>
           </div>
         </div>
       </div>
