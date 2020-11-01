@@ -1,25 +1,24 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
 
+import { TaskContext } from "../context/TaskState";
 import Task from "./task";
 import "./scss/list.scss";
 
-const list = ({ list }) => {
-  let tasks = [
-    {
-      id: 1,
-      body: "task information 1",
-    },
-    {
-      id: 2,
-      body: "task information 2",
-    },
-  ];
+const List = ({ list }) => {
+  const { isAuthenticated, user } = useAuth0();
+
+  const { tasks, getTasks } = useContext(TaskContext);
+
+  useEffect(() => {
+    getTasks(list.id);
+  });
 
   return (
     <div className="align-self-center">
-      <div class="card m-1 list-card">
-        <div class="card-body">
-          <h4 class="card-title">{list.name}</h4>
+      <div className="card m-1 list-card">
+        <div className="card-body">
+          <h4 className="card-title">{list.title}</h4>
         </div>
         {tasks.map((task) => (
           <Task key={task.id} task={task} />
@@ -29,4 +28,4 @@ const list = ({ list }) => {
   );
 };
 
-export default list;
+export default List;

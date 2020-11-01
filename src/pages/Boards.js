@@ -11,18 +11,7 @@ const Boards = () => {
 
   useEffect(() => {
     getBoards();
-  }, []);
-
-  // let boards = [
-  //   {
-  //     id: 1,
-  //     name: "board1",
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "board2",
-  //   },
-  // ];
+  });
 
   return (
     <div className="container">

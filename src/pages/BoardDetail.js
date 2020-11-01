@@ -1,18 +1,22 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
+
+import { ListContext } from "../context/ListState";
 import List from "../components/list";
 import "./scss/boards.scss";
 
-const BoardDetail = () => {
-  let lists = [
-    {
-      id: 1,
-      name: "list 1",
-    },
-    {
-      id: 2,
-      name: "list 2",
-    },
-  ];
+const BoardDetail = ({
+  match: {
+    params: { boardId },
+  },
+}) => {
+  const { isAuthenticated, user } = useAuth0();
+
+  const { lists, getLists } = useContext(ListContext);
+
+  useEffect(() => {
+    getLists(boardId);
+  }, []);
 
   return (
     <div className="container">

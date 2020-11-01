@@ -4,19 +4,19 @@ const ListReducer = (state, action) => {
       return {
         ...state,
         loading: false,
-        boards: action.payload,
+        lists: action.payload,
       };
     case "GET_LIST":
       return {
         ...state,
         loading: false,
-        board: action.payload,
+        list: action.payload,
       };
     case "POST_LISTS":
       return {
         ...state,
         loading: false,
-        boards: action.payload,
+        lists: action.payload,
       };
     default:
       return state;
