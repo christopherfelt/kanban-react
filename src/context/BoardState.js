@@ -10,12 +10,12 @@ const initialState = {
   loading: true,
 };
 
-let api = axios.create({
-  baseURL: "http://127.0.0.1:8000/api/v1/",
-  headers: {
-    "Content-type": "application/json",
-  },
-});
+// let api = axios.create({
+//   baseURL: "http://127.0.0.1:8000/api/v1/",
+//   headers: {
+//     "Content-type": "application/json",
+//   },
+// });
 
 export const BoardContext = createContext(initialState);
 
@@ -50,8 +50,15 @@ export const BoardProvider = ({ children }) => {
   async function getBoards() {
     try {
       if (isAuthenticated) {
-        const options = await getRequestData("get", "", {});
-        let res = await axios(options);
+        // const options = await getRequestData("get", "", {});
+        const token = await getAccessTokenSilently();
+        const config = {
+          headers: {
+            Authorization: "Bearer " + token,
+            "Content-type": "application/json",
+          },
+        };
+        let res = await axios.get("http://127.0.0.1:8000/api/v1/", config);
         dispatch({
           type: "GET_BOARDS",
           payload: res.data,
@@ -65,20 +72,20 @@ export const BoardProvider = ({ children }) => {
     }
   }
 
-  async function getBoard(boardId) {
-    try {
-      let res = await api.get("boards/" + boardId);
-      dispatch({
-        type: "GET_BOARD",
-        payload: res.data,
-      });
-    } catch (error) {
-      dispatch({
-        type: "BOARD_ERROR",
-        payload: error,
-      });
-    }
-  }
+  // async function getBoard(boardId) {
+  //   try {
+  //     let res = await api.get("boards/" + boardId);
+  //     dispatch({
+  //       type: "GET_BOARD",
+  //       payload: res.data,
+  //     });
+  //   } catch (error) {
+  //     dispatch({
+  //       type: "BOARD_ERROR",
+  //       payload: error,
+  //     });
+  //   }
+  // }
 
   async function createBoard(boardData) {
     try {
@@ -125,8 +132,8 @@ export const BoardProvider = ({ children }) => {
           },
         };
         await axios(options);
-        getBoard(boardData.id);
-        getBoards();
+        // getBoard(boardData.id);
+        // getBoards();
       } else {
         console.log("You are not authenticated to make this request");
       }
@@ -173,7 +180,7 @@ export const BoardProvider = ({ children }) => {
         error: state.error,
         loading: state.loading,
         getBoards,
-        getBoard,
+        // getBoard,
         createBoard,
         updateBoard,
         deleteBoard,

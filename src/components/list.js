@@ -12,7 +12,21 @@ const List = ({ list }) => {
 
   useEffect(() => {
     getTasks(list.id);
-  });
+  }, []);
+  // ^ empty array keeps useEffect from hitting getTasks a bagillion times
+
+  const getCurrentTasks = (tasks, listId) => {
+    let currentTasks = [];
+    for (let t = 0; t < tasks.length; t++) {
+      let listObj = tasks[t];
+      if (Object.keys(listObj)[0] == list.id) {
+        currentTasks = listObj[Object.keys(listObj)];
+      }
+    }
+    return currentTasks;
+  };
+
+  let currentTasks = getCurrentTasks(tasks, list.id);
 
   return (
     <div className="align-self-center">
@@ -20,7 +34,7 @@ const List = ({ list }) => {
         <div className="card-body">
           <h4 className="card-title">{list.title}</h4>
         </div>
-        {tasks.map((task) => (
+        {currentTasks.map((task) => (
           <Task key={task.id} task={task} />
         ))}
       </div>

@@ -63,7 +63,7 @@ export const TaskProvider = ({ children }) => {
         let res = await axios(options);
         dispatch({
           type: "GET_TASKS",
-          payload: res.data,
+          payload: { [listId]: res.data },
         });
       }
     } catch (error) {

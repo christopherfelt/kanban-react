@@ -4,7 +4,7 @@ const TaskReducer = (state, action) => {
       return {
         ...state,
         loading: false,
-        tasks: action.payload,
+        tasks: handleGetTasks(state, action),
       };
     case "GET_TASK":
       return {
@@ -24,6 +24,36 @@ const TaskReducer = (state, action) => {
 };
 
 export default TaskReducer;
+
+const handleGetTasks = (state, action) => {
+  console.log("Intitial State: ", state);
+  console.log("Payload: ", action.payload);
+  let list_number = Object.keys(action.payload)[0];
+  let list_exists = false;
+  for (let i = 0; i < state.tasks.length; i++) {
+    let list = state.tasks[i];
+    if (list_number in list) {
+      console.log("state.task[i]: ", state.tasks[i]);
+      state.tasks[i] = { [list_number]: action.payload[list_number] };
+      list_exists = true;
+      break;
+    }
+  }
+  if (!list_exists) {
+    state.tasks.push(action.payload);
+  }
+  console.log("state post function: ", state);
+  return state.tasks;
+};
+
+const handleTest = (state, action) => {
+  console.log("initial state: ", state);
+  return action.payload;
+};
+
+// const handlePostTask = (state, action) => {
+
+// }
 
 /*
 

@@ -11,7 +11,8 @@ const Boards = () => {
 
   useEffect(() => {
     getBoards();
-  });
+  }, []);
+  // ^ empty array keeps useEffect from hitting getTasks a bagillion times
 
   return (
     <div className="container">
