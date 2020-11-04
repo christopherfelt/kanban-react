@@ -25,13 +25,7 @@ export const BoardProvider = ({ children }) => {
   const { isAuthenticated, getAccessTokenSilently } = useAuth0();
 
   async function getRequestData(requestType, requestPath, data) {
-    let url = "";
-
-    if (requestType === "get" || requestType === "post") {
-      url = "http://127.0.0.1:8000/api/v1/" + requestPath;
-    } else {
-      url = "http://127.0.0.1:8000/api/v1/" + requestPath + "/" + data.id;
-    }
+    let url = "http://127.0.0.1:8000/api/v1/" + requestPath;
 
     const token = await getAccessTokenSilently();
 
@@ -44,21 +38,18 @@ export const BoardProvider = ({ children }) => {
       },
     };
 
+    if (data != null) {
+      options.data = data;
+    }
+
     return options;
   }
-
   async function getBoards() {
     try {
       if (isAuthenticated) {
-        // const options = await getRequestData("get", "", {});
-        const token = await getAccessTokenSilently();
-        const config = {
-          headers: {
-            Authorization: "Bearer " + token,
-            "Content-type": "application/json",
-          },
-        };
-        let res = await axios.get("http://127.0.0.1:8000/api/v1/", config);
+        const options = await getRequestData("get", "", {});
+        let res = await axios(options);
+        console.log("board state get");
         dispatch({
           type: "GET_BOARDS",
           payload: res.data,
@@ -90,18 +81,10 @@ export const BoardProvider = ({ children }) => {
   async function createBoard(boardData) {
     try {
       if (isAuthenticated) {
-        console.log(boardData);
-        const token = await getAccessTokenSilently();
-        const options = {
-          method: "post",
-          url: "http://127.0.0.1:8000/api/boards",
-          data: boardData,
-          headers: {
-            Authorization: "Bearer " + token,
-            "Content-type": "application/json",
-          },
-        };
-        await axios(options);
+        const options = await getRequestData("post", "", boardData);
+        console.log(options);
+        let res = await axios(options);
+
         getBoards();
       } else {
         console.log("You are not authenticated to make this request");
