@@ -3,20 +3,37 @@ const ListReducer = (state, action) => {
     case "GET_LISTS":
       return {
         ...state,
-        loading: false,
+        loadingAllLists: false,
         lists: action.payload,
       };
     case "GET_LIST":
       return {
         ...state,
-        loading: false,
         list: action.payload,
+      };
+    case "POST_LOAD":
+      return {
+        ...state,
+        loadingNewBoard: true,
       };
     case "POST_LISTS":
       return {
         ...state,
-        loading: false,
-        lists: action.payload,
+        loadingNewBoard: false,
+        lists: [...state.lists, action.payload],
+      };
+    case "PUT_LIST":
+      return {
+        ...state,
+        lists: state.lists.map((st) => {
+          if (st.id == action.payload) return action.payload;
+          return st;
+        }),
+      };
+    case "DELETE_LIST":
+      return {
+        ...state,
+        lists: state.lists.filter((st) => st.id != action.payload),
       };
     default:
       return state;

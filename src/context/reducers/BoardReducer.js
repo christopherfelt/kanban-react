@@ -3,20 +3,37 @@ const BoardReducer = (state, action) => {
     case "GET_BOARDS":
       return {
         ...state,
-        loading: false,
+        loadingAllBoards: false,
         boards: action.payload,
       };
     case "GET_BOARD":
       return {
         ...state,
-        loading: false,
         board: action.payload,
       };
-    case "POST_BOARDS":
+    case "POST_LOAD":
       return {
         ...state,
-        loading: false,
-        boards: action.payload,
+        loadingNewBoard: true,
+      };
+    case "POST_BOARD":
+      return {
+        ...state,
+        loadingNewBoard: false,
+        boards: [...state.boards, action.payload],
+      };
+    case "PUT_BOARD":
+      return {
+        ...state,
+        boards: state.boards.map((b) => {
+          if (b.id == action.payload.id) return action.payload;
+          return b;
+        }),
+      };
+    case "DELETE_BOARD":
+      return {
+        ...state,
+        boards: state.boards.filter((b) => b.id != action.payload),
       };
     default:
       return state;

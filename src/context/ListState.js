@@ -7,15 +7,9 @@ const initialState = {
   list: {},
   lists: [],
   error: null,
-  loading: true,
+  loadingAllLists: true,
+  loadingNewList: false,
 };
-
-let api = axios.create({
-  baseURL: "http://127.0.0.1:8000/api/v1/",
-  headers: {
-    "Content-type": "application/json",
-  },
-});
 
 export const ListContext = createContext(initialState);
 
@@ -24,19 +18,8 @@ export const ListProvider = ({ children }) => {
 
   const { isAuthenticated, getAccessTokenSilently } = useAuth0();
 
-  async function getRequestData(
-    requestType,
-    requestPath,
-    data,
-    addPath = false
-  ) {
+  async function getRequestData(requestType, requestPath, data) {
     let url = "http://127.0.0.1:8000/api/v1/" + requestPath;
-
-    // if ((requestType === "get" || requestType === "post") && !addPath) {
-    //   url = "http://127.0.0.1:8000/api/v1/" + requestPath;
-    // } else {
-    //   url = "http://127.0.0.1:8000/api/v1/" + requestPath + "/" + data.id;
-    // }
 
     const token = await getAccessTokenSilently();
 
@@ -49,13 +32,16 @@ export const ListProvider = ({ children }) => {
       },
     };
 
+    if (data != null) {
+      options.data = data;
+    }
+
     return options;
   }
 
   async function getLists(boardId) {
     try {
       if (isAuthenticated) {
-        let data = { id: boardId };
         const options = await getRequestData(
           "get",
           "boards/" + boardId + "/lists"
@@ -76,10 +62,10 @@ export const ListProvider = ({ children }) => {
 
   async function getList(listId) {
     try {
-      let res = await api.get("lists/" + listId);
+      // let res = await api.get("lists/" + listId);
       dispatch({
         type: "GET_LIST",
-        payload: res.data,
+        // payload: res.data,
       });
     } catch (error) {
       dispatch({
@@ -92,7 +78,6 @@ export const ListProvider = ({ children }) => {
   async function createList(listData) {
     try {
       if (isAuthenticated) {
-        console.log(listData);
         const token = await getAccessTokenSilently();
         const options = {
           method: "post",

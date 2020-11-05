@@ -7,15 +7,9 @@ const initialState = {
   board: {},
   boards: [],
   error: null,
-  loading: true,
+  loadingAllBoards: true,
+  loadingNewBoard: false,
 };
-
-// let api = axios.create({
-//   baseURL: "http://127.0.0.1:8000/api/v1/",
-//   headers: {
-//     "Content-type": "application/json",
-//   },
-// });
 
 export const BoardContext = createContext(initialState);
 
@@ -44,12 +38,12 @@ export const BoardProvider = ({ children }) => {
 
     return options;
   }
+
   async function getBoards() {
     try {
       if (isAuthenticated) {
         const options = await getRequestData("get", "", {});
         let res = await axios(options);
-        console.log("board state get");
         dispatch({
           type: "GET_BOARDS",
           payload: res.data,
@@ -81,11 +75,15 @@ export const BoardProvider = ({ children }) => {
   async function createBoard(boardData) {
     try {
       if (isAuthenticated) {
+        dispatch({
+          type: "POST_LOAD",
+        });
         const options = await getRequestData("post", "", boardData);
-        console.log(options);
         let res = await axios(options);
-
-        getBoards();
+        dispatch({
+          type: "POST_BOARD",
+          payload: res.data,
+        });
       } else {
         console.log("You are not authenticated to make this request");
       }
@@ -100,23 +98,12 @@ export const BoardProvider = ({ children }) => {
   async function updateBoard(boardData) {
     try {
       if (isAuthenticated) {
-        const token = await getAccessTokenSilently();
-        console.log("token: ", token);
-        const options = {
-          method: "put",
-          url:
-            "http://127.0.0.1:8000/api/boards/" +
-            boardData.id +
-            "/updateordelete",
-          data: boardData,
-          headers: {
-            Authorization: "Bearer " + token,
-            "Content-type": "application/json",
-          },
-        };
-        await axios(options);
-        // getBoard(boardData.id);
-        // getBoards();
+        const options = await getRequestData("put", boardData.id, boardData);
+        let res = await axios(options);
+        dispatch({
+          type: "PUT_BOARD",
+          payload: res.data,
+        });
       } else {
         console.log("You are not authenticated to make this request");
       }
@@ -131,21 +118,14 @@ export const BoardProvider = ({ children }) => {
   async function deleteBoard(boardId) {
     try {
       if (isAuthenticated) {
-        const token = await getAccessTokenSilently();
-        const options = {
-          method: "delete",
-          url:
-            "http://127.0.0.1:8000/api/boards/" + boardId + "/updateordelete",
-          data: boardId,
-          headers: {
-            Authorization: "Bearer " + token,
-            "Content-type": "application/json",
-          },
-        };
+        dispatch({
+          type: "DELETE_BOARD",
+          payload: boardId,
+        });
+        const options = await getRequestData("delete", boardId, {});
         await axios(options);
-        getBoards();
       } else {
-        console.log("You are not authenticated to make this request");
+        console.log("You are not authenticated and cannot make this request");
       }
     } catch (error) {
       dispatch({
@@ -161,7 +141,8 @@ export const BoardProvider = ({ children }) => {
         board: state.board,
         boards: state.boards,
         error: state.error,
-        loading: state.loading,
+        loadingAllBoards: state.loadingAllBoards,
+        loadingNewBoard: state.loadingNewBoard,
         getBoards,
         // getBoard,
         createBoard,

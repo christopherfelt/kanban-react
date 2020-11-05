@@ -11,7 +11,13 @@ const Boards = () => {
     title: "",
   };
 
-  const { boards, getBoards, createBoard } = useContext(BoardContext);
+  const {
+    loadingAllBoards,
+    loadingNewBoard,
+    boards,
+    getBoards,
+    createBoard,
+  } = useContext(BoardContext);
   const [allValues, setAllValues] = useState(initialState);
 
   useEffect(() => {
@@ -20,6 +26,8 @@ const Boards = () => {
   }, [user]);
   // ^ empty array keeps useEffect from hitting getTasks a bagillion times
   // I put user in the dependency so that when auth0 completes its load the use effect hits again
+
+  console.log(boards);
 
   const newBoardHandler = (e) => {
     createBoard({ title: "New Board", description: "This is a new board" });
@@ -32,17 +40,25 @@ const Boards = () => {
   return (
     <div className="container">
       <div className="row">
-        <div className="col-12 d-flex boards-height">
-          {boards.map((board) => (
-            <Board key={board.id} board={board} />
-          ))}
-          <button
-            className="btn btn-primary align-self-center board-card"
-            onClick={newBoardHandler}
-          >
-            Add Board
-          </button>
-        </div>
+        {loadingAllBoards ? (
+          <h1>Loading...</h1>
+        ) : (
+          <div className="col-12 d-flex boards-height">
+            {boards.map((board) => (
+              <Board key={board.id} board={board} />
+            ))}
+            {!loadingNewBoard ? (
+              <button
+                className="btn btn-primary align-self-center board-card"
+                onClick={newBoardHandler}
+              >
+                Add Board
+              </button>
+            ) : (
+              ""
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
