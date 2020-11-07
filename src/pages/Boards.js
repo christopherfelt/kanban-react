@@ -22,12 +22,9 @@ const Boards = () => {
 
   useEffect(() => {
     getBoards();
-    console.log("boards use effect");
   }, [user]);
   // ^ empty array keeps useEffect from hitting getTasks a bagillion times
   // I put user in the dependency so that when auth0 completes its load the use effect hits again
-
-  console.log(boards);
 
   const newBoardHandler = (e) => {
     createBoard({ title: "New Board", description: "This is a new board" });

@@ -14,12 +14,12 @@ const ListReducer = (state, action) => {
     case "POST_LOAD":
       return {
         ...state,
-        loadingNewBoard: true,
+        loadingNewList: true,
       };
-    case "POST_LISTS":
+    case "POST_LIST":
       return {
         ...state,
-        loadingNewBoard: false,
+        loadingNewList: false,
         lists: [...state.lists, action.payload],
       };
     case "PUT_LIST":

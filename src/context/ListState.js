@@ -60,38 +60,39 @@ export const ListProvider = ({ children }) => {
     }
   }
 
-  async function getList(listId) {
-    try {
-      // let res = await api.get("lists/" + listId);
-      dispatch({
-        type: "GET_LIST",
-        // payload: res.data,
-      });
-    } catch (error) {
-      dispatch({
-        type: "LIST_ERROR",
-        payload: error,
-      });
-    }
-  }
+  // async function getList(listId) {
+  //   try {
+  //     // let res = await api.get("lists/" + listId);
+  //     dispatch({
+  //       type: "GET_LIST",
+  //       // payload: res.data,
+  //     });
+  //   } catch (error) {
+  //     dispatch({
+  //       type: "LIST_ERROR",
+  //       payload: error,
+  //     });
+  //   }
+  // }
 
   async function createList(listData) {
     try {
       if (isAuthenticated) {
-        const token = await getAccessTokenSilently();
-        const options = {
-          method: "post",
-          url: "http://127.0.0.1:8000/api/lists",
-          data: listData,
-          headers: {
-            Authorization: "Bearer " + token,
-            "Content-type": "application/json",
-          },
-        };
-        await axios(options);
-        getLists();
+        dispatch({
+          type: "POST_LOAD",
+        });
+        const options = await getRequestData(
+          "post",
+          "boards/" + listData.boardId + "/lists",
+          listData
+        );
+        let res = await axios(options);
+        dispatch({
+          type: "POST_LIST",
+          payload: res.data,
+        });
       } else {
-        console.log("You are not authenticated to make this request");
+        console.log("You are not authorized to make this request");
       }
     } catch (error) {
       dispatch({
@@ -104,24 +105,18 @@ export const ListProvider = ({ children }) => {
   async function updateList(listData) {
     try {
       if (isAuthenticated) {
-        const token = await getAccessTokenSilently();
-        const options = {
-          method: "put",
-          url:
-            "http://127.0.0.1:8000/api/lists/" +
-            listData.id +
-            "/updateordelete",
-          data: listData,
-          headers: {
-            Authorization: "Bearer " + token,
-            "Content-type": "application/json",
-          },
-        };
-        await axios(options);
-        getList(listData.id);
-        getLists();
+        const options = await getRequestData(
+          "put",
+          "boards/" + listData.boardId + "/lists/" + listData.id,
+          listData
+        );
+        let res = await axios(options);
+        dispatch({
+          type: "PUT_LIST",
+          payload: res.data,
+        });
       } else {
-        console.log("You are not authenticated to make this request");
+        console.log("You are not authorized to make this request");
       }
     } catch (error) {
       dispatch({
@@ -131,23 +126,21 @@ export const ListProvider = ({ children }) => {
     }
   }
 
-  async function deleteList(listId) {
+  async function deleteList(listData) {
     try {
       if (isAuthenticated) {
-        const token = await getAccessTokenSilently();
-        const options = {
-          method: "delete",
-          url: "http://127.0.0.1:8000/api/lists/" + listId + "/updateordelete",
-          data: listId,
-          headers: {
-            Authorization: "Bearer " + token,
-            "Content-type": "application/json",
-          },
-        };
+        dispatch({
+          type: "DELETE_LIST",
+          payload: listData.id,
+        });
+        const options = await getRequestData(
+          "delete",
+          "boards/" + listData.boardId + "/lists/" + listData.id,
+          {}
+        );
         await axios(options);
-        getLists();
       } else {
-        console.log("You are not authenticated to make this request");
+        console.log("You are not authorized to make this request");
       }
     } catch (error) {
       dispatch({
@@ -165,7 +158,6 @@ export const ListProvider = ({ children }) => {
         error: state.error,
         loading: state.loading,
         getLists,
-        getList,
         createList,
         updateList,
         deleteList,

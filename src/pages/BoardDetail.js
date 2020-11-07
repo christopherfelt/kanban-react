@@ -12,11 +12,15 @@ const BoardDetail = ({
 }) => {
   const { isAuthenticated, user } = useAuth0();
 
-  const { lists, getLists } = useContext(ListContext);
+  const { lists, getLists, createList } = useContext(ListContext);
 
   useEffect(() => {
     getLists(boardId);
-  }, []);
+  }, [user]);
+
+  const newListHandler = (e) => {
+    createList({ title: "new list", boardId: boardId });
+  };
 
   return (
     <div className="container">
@@ -25,6 +29,12 @@ const BoardDetail = ({
           {lists.map((list) => (
             <List key={list.id} list={list} />
           ))}
+          <button
+            className="btn btn-primary align-self-center board-card"
+            onClick={newListHandler}
+          >
+            Add List
+          </button>
         </div>
       </div>
     </div>

@@ -7,21 +7,9 @@ const initialState = {
   task: {},
   tasks: [],
   error: null,
-  loading: true,
+  loadingAllTasks: true,
+  loadingNewTask: false,
 };
-
-// let taskExample = [
-//   {
-//     listId: ["tasks"],
-//   },
-// ];
-
-let api = axios.create({
-  baseURL: "http://127.0.0.1:8000/api/v1/",
-  headers: {
-    "Content-type": "application/json",
-  },
-});
 
 export const TaskContext = createContext(initialState);
 
@@ -30,12 +18,7 @@ export const TaskProvider = ({ children }) => {
 
   const { isAuthenticated, getAccessTokenSilently } = useAuth0();
 
-  async function getRequestData(
-    requestType,
-    requestPath,
-    data,
-    addPath = false
-  ) {
+  async function getRequestData(requestType, requestPath, data) {
     let url = "http://127.0.0.1:8000/api/v1/" + requestPath;
 
     const token = await getAccessTokenSilently();
@@ -49,13 +32,16 @@ export const TaskProvider = ({ children }) => {
       },
     };
 
+    if (data != null) {
+      options.data = data;
+    }
+
     return options;
   }
 
   async function getTasks(listId) {
     try {
       if (isAuthenticated) {
-        let data = { id: listId };
         const options = await getRequestData(
           "get",
           "lists/" + listId + "/tasks"
@@ -74,37 +60,35 @@ export const TaskProvider = ({ children }) => {
     }
   }
 
-  async function getTask(taskId) {
-    try {
-      let res = await api.get("tasks/" + taskId);
-      dispatch({
-        type: "GET_TASK",
-        payload: res.data,
-      });
-    } catch (error) {
-      dispatch({
-        type: "TASK_ERROR",
-        payload: error,
-      });
-    }
-  }
+  // async function getTask(taskId) {
+  //   try {
+  //     let res = await api.get("tasks/" + taskId);
+  //     dispatch({
+  //       type: "GET_TASK",
+  //       payload: res.data,
+  //     });
+  //   } catch (error) {
+  //     dispatch({
+  //       type: "TASK_ERROR",
+  //       payload: error,
+  //     });
+  //   }
+  // }
 
   async function createTask(taskData) {
     try {
       if (isAuthenticated) {
         console.log(taskData);
-        const token = await getAccessTokenSilently();
-        const options = {
-          method: "post",
-          url: "http://127.0.0.1:8000/api/tasks",
-          data: taskData,
-          headers: {
-            Authorization: "Bearer " + token,
-            "Content-type": "application/json",
-          },
-        };
-        await axios(options);
-        getTasks();
+        const options = await getRequestData(
+          "post",
+          "lists/" + taskData.listId + "/tasks",
+          taskData
+        );
+        let res = await axios(options);
+        dispatch({
+          type: "POST_TASK",
+          payload: { [taskData]: res.data },
+        });
       } else {
         console.log("You are not authenticated to make this request");
       }
@@ -119,22 +103,23 @@ export const TaskProvider = ({ children }) => {
   async function updateTask(taskData) {
     try {
       if (isAuthenticated) {
-        const token = await getAccessTokenSilently();
-        const options = {
-          method: "put",
-          url:
-            "http://127.0.0.1:8000/api/tasks/" +
-            taskData.id +
-            "/updateordelete",
-          data: taskData,
-          headers: {
-            Authorization: "Bearer " + token,
-            "Content-type": "application/json",
-          },
-        };
-        await axios(options);
-        getTask(taskData.id);
-        getTasks();
+        const options = await getRequestData(
+          "put",
+          `lists/${taskData.list_id}/tasks/${taskData.id}`,
+          taskData
+        );
+        let res = await axios(options);
+        if (taskData.move) {
+          dispatch({
+            type: "PUT_LISTID_TASK",
+            payload: { [taskData.list_id]: res.data },
+          });
+        } else {
+          dispatch({
+            type: "PUT_BODY_TASK",
+            payload: { [taskData.list_id]: res.data },
+          });
+        }
       } else {
         console.log("You are not authenticated to make this request");
       }
@@ -180,7 +165,6 @@ export const TaskProvider = ({ children }) => {
         error: state.error,
         loading: state.loading,
         getTasks,
-        getTask,
         createTask,
         updateTask,
         deleteTask,
