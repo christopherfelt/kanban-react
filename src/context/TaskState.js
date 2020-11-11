@@ -110,9 +110,10 @@ export const TaskProvider = ({ children }) => {
         );
         let res = await axios(options);
         if (taskData.move) {
+          console.log(res.data);
           dispatch({
             type: "PUT_LISTID_TASK",
-            payload: { [taskData.list_id]: res.data },
+            payload: { [taskData.oldTaskList]: res.data },
           });
         } else {
           dispatch({

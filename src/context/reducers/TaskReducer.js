@@ -88,9 +88,11 @@ const handlePutListIdTask = (state, action) => {
   for (let i = 0; i < state.tasks.length; i++) {
     let list = state.tasks[i];
     if (list_number in list) {
-      list[list_number] = list[list_number].filter(
-        (t) => t.id != action.payload[list_number]["id"]
-      );
+      list[list_number] = list[list_number].filter((t) => {
+        return t.id != action.payload[list_number]["id"];
+      });
+      console.log(list[list_number]);
+
       new_payload = {
         [action.payload[list_number]["list_id"]]: action.payload[list_number],
       };

@@ -19,7 +19,13 @@ const Task = ({ task }) => {
 
   const submitListIdHandler = (e) => {
     e.preventDefault();
-    updateTask({ id: task.id, list_id: listId, body: body, move: true });
+    updateTask({
+      id: task.id,
+      oldTaskList: task.list_id,
+      list_id: listId,
+      body: body,
+      move: true,
+    });
     openInputHandler();
   };
 
@@ -42,6 +48,7 @@ const Task = ({ task }) => {
   return (
     <div className="task border text-center">
       <h6 onClick={openInputHandler}>{task.body}</h6>
+      <h6>{task.id}</h6>
       <div className={`${!openInput ? "d-none" : ""}`}>
         <form onSubmit={submitBodyHandler}>
           <label htmlFor="body">Body: </label>
