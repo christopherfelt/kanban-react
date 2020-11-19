@@ -11,6 +11,8 @@ import { BoardProvider } from "./context/BoardState";
 import { ListProvider } from "./context/ListState";
 import { TaskProvider } from "./context/TaskState";
 
+import "./app.scss";
+
 function App() {
   const { loginWithRedirect, logout, user, isAuthenticated } = useAuth0();
 
@@ -20,7 +22,7 @@ function App() {
         <ListProvider>
           <TaskProvider>
             <div className="App">
-              <nav className="navbar navbar-expand-lg navbar-light bg-light">
+              {/* <nav className="navbar navbar-expand-lg navbar-light bg-light">
                 <Link className="navbar-brand" to="/">
                   Kanban
                 </Link>
@@ -42,7 +44,7 @@ function App() {
                     Log Out
                   </button>
                 )}
-              </nav>
+              </nav> */}
             </div>
             <Switch>
               <Route path="/" exact component={Landing} />
